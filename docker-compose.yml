@@ -1,0 +1,39 @@
+# ============================================================
+# docker-compose.yml — Antigravity Multi-Agent System
+# Run with: docker compose up -d
+# Stop with: docker compose down
+# Logs with: docker compose logs -f
+# ============================================================
+
+services:
+  antigravity-bot:
+    build: .
+    container_name: antigravity-bot
+    restart: unless-stopped
+
+    env_file:
+      - 1_config/.env
+
+    environment:
+      # Point to host machine services
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - ANYTHINGLLM_HOST=http://host.docker.internal:3001
+      - WHISPER_MODEL=base
+      - OUTPUT_DIR=/app/8_outputs
+
+    volumes:
+      - ./8_outputs:/app/8_outputs
+      - ./5_skills:/app/5_skills
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"

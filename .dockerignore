@@ -1,0 +1,41 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environments
+.env
+*.env
+venv/
+.venv/
+env/
+
+# Test/verify scripts
+verify_*.py
+test_*.py
+check_*.py
+
+# Outputs (mounted as volume)
+outputs/
+
+# Git
+.git/
+.gitignore
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Node
+node_modules/
