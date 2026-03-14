@@ -1,0 +1,31 @@
+{
+  "name": "spreadsheet_layout",
+  "description": "Professional Excel / CSV spreadsheet structure and formatting rules",
+  "sheet_structure": [
+    { "sheet": 1, "name": "Data", "purpose": "Raw data table with labelled headers — first row frozen" },
+    { "sheet": 2, "name": "Summary", "purpose": "Key statistics: count, mean, min, max, totals" },
+    { "sheet": 3, "name": "Insights", "purpose": "Key findings as a bulleted text section" }
+  ],
+  "design_rules": {
+    "header_row": "bold, coloured background, white text",
+    "alternating_rows": true,
+    "freeze_top_row": true,
+    "auto_fit_columns": true,
+    "number_format": "2 decimal places for floats",
+    "date_format": "YYYY-MM-DD"
+  },
+  "summary_metrics": [
+    "row_count",
+    "column_count",
+    "numeric_column_totals",
+    "numeric_column_averages",
+    "missing_value_count"
+  ],
+  "anti_patterns": [
+    "merged cells in data range",
+    "unlabelled columns",
+    "mixed data types in same column",
+    "no header row",
+    "data without summary sheet"
+  ]
+}

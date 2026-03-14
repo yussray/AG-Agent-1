@@ -1,0 +1,29 @@
+{
+  "name": "presentation_layout",
+  "description": "Professional slide deck structure and design rules",
+  "slide_structure": [
+    { "slide": 1, "type": "title", "purpose": "Title + subtitle + presenter name" },
+    { "slide": 2, "type": "overview", "purpose": "Agenda / what will be covered" },
+    { "slide": 3, "type": "background", "purpose": "Problem statement / context / why this matters" },
+    { "slide": 4, "type": "key_concepts", "purpose": "Core definitions or foundational concepts" },
+    { "slide": 5, "type": "detailed_explanation", "purpose": "Deep dive into main topic" },
+    { "slide": 6, "type": "supporting_example", "purpose": "Case study / clinical example / data" },
+    { "slide": 7, "type": "summary", "purpose": "Key takeaways" },
+    { "slide": 8, "type": "references", "purpose": "Sources / further reading / next steps" }
+  ],
+  "design_rules": {
+    "max_bullets_per_slide": 5,
+    "max_words_per_bullet": 12,
+    "title_max_words": 8,
+    "style": "minimal_professional",
+    "color_scheme": "dark_accent",
+    "typography": "sans_serif_body_serif_heading"
+  },
+  "anti_patterns": [
+    "more than 6 bullet points per slide",
+    "full sentences in bullets",
+    "more than 3 font sizes",
+    "text-only slides without structure",
+    "inconsistent capitalisation"
+  ]
+}

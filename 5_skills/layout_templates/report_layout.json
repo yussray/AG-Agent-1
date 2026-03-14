@@ -1,0 +1,29 @@
+{
+  "name": "report_layout",
+  "description": "Professional report / Word document structure and formatting rules",
+  "document_structure": [
+    { "section": 1, "heading": "Title Page", "purpose": "Document title, author, date" },
+    { "section": 2, "heading": "Executive Summary", "purpose": "1-paragraph summary of purpose, findings, and recommendation" },
+    { "section": 3, "heading": "Background", "purpose": "Context, problem statement, why this document exists" },
+    { "section": 4, "heading": "Main Analysis", "purpose": "Detailed body — methodology, findings, data" },
+    { "section": 5, "heading": "Key Insights", "purpose": "Bulleted list of the most important findings" },
+    { "section": 6, "heading": "Recommendations", "purpose": "Actionable next steps or conclusions" },
+    { "section": 7, "heading": "Conclusion", "purpose": "Summary and closing statement" },
+    { "section": 8, "heading": "References", "purpose": "Sources, citations, further reading" }
+  ],
+  "design_rules": {
+    "executive_summary_max_words": 150,
+    "section_heading_style": "bold_h1",
+    "body_font_size": 11,
+    "line_spacing": 1.15,
+    "max_paragraph_sentences": 5,
+    "include_page_numbers": true
+  },
+  "anti_patterns": [
+    "missing executive summary",
+    "paragraphs longer than 6 sentences",
+    "no clear section headings",
+    "conclusions without supporting analysis",
+    "references section omitted"
+  ]
+}

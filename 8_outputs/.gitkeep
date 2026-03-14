@@ -1,0 +1,5 @@
+# AG-Agent outputs directory
+# Generated files (PDF, PPTX, DOCX, XLSX, CSV) are saved here.
+# This directory is mounted as a Docker volume for persistence.
+#
+# Files in this directory are excluded from git via .gitignore.
