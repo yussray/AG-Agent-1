@@ -1,116 +1,99 @@
 # ============================================================
 # ollama_connector.py — Antigravity Multi-Agent System
-# Client wrapper for the Ollama local LLM API
+# Wrapper around the Ollama local API
 # ============================================================
 
-import os
 import sys
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import paths  # noqa: E402
 
 import requests
-import logging
+import json
 from config import OLLAMA_BASE_URL
-
-logger = logging.getLogger("antigravity.ollama")
 
 
 class OllamaConnector:
-    """
-    Thin wrapper around the Ollama REST API.
-    Provides chat, generate, and model management functions.
-    """
-
-    def __init__(self, base_url: str = None):
-        self.base_url = (base_url or OLLAMA_BASE_URL).rstrip("/")
+    def __init__(self, base_url: str = OLLAMA_BASE_URL):
+        self.base_url = base_url
 
     def is_available(self) -> bool:
-        """Check if Ollama is running and reachable."""
+        """Check if Ollama server is running."""
         try:
-            r = requests.get(f"{self.base_url}/", timeout=3)
-            return r.status_code == 200
-        except Exception:
+            resp = requests.get(f"{self.base_url}/api/tags", timeout=3)
+            return resp.status_code == 200
+        except requests.exceptions.ConnectionError:
             return False
 
-    def list_models(self) -> list[str]:
-        """Return a list of available model names."""
-        try:
-            r = requests.get(f"{self.base_url}/api/tags", timeout=5)
-            r.raise_for_status()
-            return [m["name"] for m in r.json().get("models", [])]
-        except Exception as e:
-            logger.error(f"list_models failed: {e}")
-            return []
-
-    def generate(
-        self,
-        model: str,
-        prompt: str,
-        system: str = "",
-        temperature: float = 0.7,
-        max_tokens: int = 4096
-    ) -> str:
+    def chat(self, model: str, messages: list, temperature: float = 0.2) -> str:
         """
-        Generate a completion using the /api/generate endpoint.
-        Returns the full response as a string.
-        """
-        payload = {
-            "model": model,
-            "prompt": prompt,
-            "stream": False,
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens
-            }
-        }
-        if system:
-            payload["system"] = system
+        Send a chat request to Ollama.
 
-        try:
-            r = requests.post(
-                f"{self.base_url}/api/generate",
-                json=payload,
-                timeout=120
-            )
-            r.raise_for_status()
-            return r.json().get("response", "").strip()
-        except Exception as e:
-            logger.error(f"generate failed [{model}]: {e}")
-            raise
+        Args:
+            model: Model name (e.g. 'qwen2.5:7b')
+            messages: List of dicts with 'role' and 'content'
+            temperature: Sampling temperature
 
-    def chat(
-        self,
-        model: str,
-        messages: list[dict],
-        temperature: float = 0.3,
-        max_tokens: int = 2048
-    ) -> str:
-        """
-        Chat completion using the /api/chat endpoint.
-        messages: list of {role, content} dicts.
+        Returns:
+            Assistant's response as a string
         """
         payload = {
             "model": model,
             "messages": messages,
             "stream": False,
             "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens
+                "temperature": temperature
             }
         }
 
         try:
-            r = requests.post(
+            resp = requests.post(
                 f"{self.base_url}/api/chat",
                 json=payload,
                 timeout=120
             )
-            r.raise_for_status()
-            return r.json()["message"]["content"].strip()
-        except Exception as e:
-            logger.error(f"chat failed [{model}]: {e}")
-            raise
+            resp.raise_for_status()
+            data = resp.json()
+            return data["message"]["content"]
+
+        except requests.exceptions.ConnectionError:
+            raise ConnectionError(
+                "❌ Cannot connect to Ollama. Make sure it's running with: ollama serve"
+            )
+        except requests.exceptions.Timeout:
+            raise TimeoutError("❌ Ollama request timed out. The model may be loading.")
+        except (KeyError, json.JSONDecodeError) as e:
+            raise ValueError(f"❌ Unexpected response from Ollama: {e}")
+
+    def generate(self, model: str, prompt: str, temperature: float = 0.2,
+                 history: list = None) -> str:
+        """
+        Generate a response, optionally with prior conversation history.
+
+        Args:
+            model:       Model name (e.g. 'qwen2.5:7b')
+            prompt:      The current user message
+            temperature: Sampling temperature
+            history:     Optional list of prior messages
+                         [{"role": "user"|"assistant", "content": "..."}]
+                         These are prepended before the current prompt.
+
+        Returns:
+            Generated text as a string
+        """
+        messages = list(history) if history else []
+        messages.append({"role": "user", "content": prompt})
+        return self.chat(model, messages, temperature)
+
+    def list_models(self) -> list:
+        """Return list of locally available model names."""
+        try:
+            resp = requests.get(f"{self.base_url}/api/tags", timeout=5)
+            resp.raise_for_status()
+            return [m["name"] for m in resp.json().get("models", [])]
+        except Exception:
+            return []
 
 
-# Singleton instance
+# Singleton instance for use across modules
 ollama = OllamaConnector()
